@@ -1,0 +1,6 @@
+/home/may33/projects/graphics/build/CMakeFiles/graphics.dir
+/home/may33/projects/graphics/build/CMakeFiles/edit_cache.dir
+/home/may33/projects/graphics/build/CMakeFiles/rebuild_cache.dir
+/home/may33/projects/graphics/build/external/glad/CMakeFiles/glad.dir
+/home/may33/projects/graphics/build/external/glad/CMakeFiles/edit_cache.dir
+/home/may33/projects/graphics/build/external/glad/CMakeFiles/rebuild_cache.dir
