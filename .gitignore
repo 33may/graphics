@@ -1,0 +1,5 @@
+build/
+
+external/glad/build/
+external/glad/include/
+external/glad/CMakeFiles/
