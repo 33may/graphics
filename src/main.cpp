@@ -71,7 +71,6 @@ int main() {
         processInput(win);
 
 
-
         // render commands
 
         glClearColor(0.0f, 0.2f, 0.4f, 1.0f); // заливаем фон
@@ -92,7 +91,7 @@ int main() {
         unsigned int VBO;
         glGenBuffers(1, &VBO);
 
-
+        // copy the vertices to VBO buffer
         glBindBuffer(GL_ARRAY_BUFFER, VBO);
 
         glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
@@ -101,12 +100,12 @@ int main() {
         // vertex shader
 
         std::string vertexSrc = loadFileSrc("src/shaders/basic.vert");
-        std::string ragmentSrc = loadFileSrc("src/shaders/basic.frag");
+        std::string fragmentSrc = loadFileSrc("src/shaders/basic.frag");
 
         // std::cout << vertexSrc;
 
         const GLchar* srcVertexPtr = vertexSrc.c_str();
-        const GLchar* srcFragmentPtr = vertexSrc.c_str();
+        const GLchar* srcFragmentPtr = fragmentSrc.c_str();
 
         unsigned int vertexShader;
         vertexShader = glCreateShader(GL_VERTEX_SHADER);
@@ -114,16 +113,6 @@ int main() {
         glShaderSource(vertexShader, 1, &srcVertexPtr, nullptr);
 
         glCompileShader(vertexShader);
-
-        // int  success;
-        // char infoLog[512];
-        // glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-        
-        // if(!success)
-        // {
-        //     glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
-        //     std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
-        // }
         
 
 
@@ -149,13 +138,34 @@ int main() {
         glLinkProgram(shaderProgram);
 
 
-        glUseProgram(shaderProgram);
-
-
         glDeleteShader(vertexShader);
         glDeleteShader(fragmentShader);
 
-        
+        // set the vertex attribute pointer
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, (void*)0);
+        glEnableVertexAttribArray(0);
+
+
+        unsigned int VAO;
+        glGenVertexArrays(1, &VAO);
+
+
+        glBindVertexArray(VAO);
+
+        glBindBuffer(GL_ARRAY_BUFFER, VBO);
+
+        glBufferData(0, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, (void*)0);
+
+        glEnableVertexAttribArray(0);
+
+
+        // draw the object 
+        glUseProgram(shaderProgram);
+        glBindVertexArray(VAO);
+
+        glDrawArrays(GL_TRIANGLES, 0, 3);
 
         // check and call events and swap buffer
 
