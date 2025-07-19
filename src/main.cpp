@@ -2,8 +2,12 @@
 #include <GLFW/glfw3.h>
 #include <iostream>
 #include <fstream>
+#include <cmath>
 
 #include"shaderClass.h"
+#include"VertexBufferClass.h"
+#include"VertexAttributeObject.h"
+#include"ElementBufferObject.h"
 
 
 // function to modify glfwWindow on resize
@@ -69,28 +73,41 @@ int main() {
 
 
     // create verticies of triangle
-    float vertices[] = {
-            -0.5f, -0.5f, 0.0,
-            0.5f, -0.5f, 0.0f,
-            0.0f,  0.5f, 0.0f
+    GLfloat vertices[] = {
+            -0.5f, -0.5f * float(std::sqrt(3)) / 3, 0.0f,
+            0.5f, -0.5f * float(std::sqrt(3)) / 3, 0.0f,
+            0.0f, 0.5f * float(std::sqrt(3)) * 2 / 3, 0.0f,
+            -0.5f / 2,  0.5f * float(std::sqrt(3)) / 6, 0.0f,
+            0.5f / 2,  0.5f * float(std::sqrt(3)) / 6, 0.0f,
+            0.0f,  -0.5f * float(std::sqrt(3)) / 3, 0.0f,
+        };
+
+    GLuint idx[] = {
+            0, 3, 5,
+            3, 2, 4,
+            5, 4, 1
         };
 
 
-    // initialize Vertex Buffer Object pointer and generate actual buffer 
-    GLuint VBO;
-    glGenBuffers(1, &VBO);
-
-
-    // bind the created Vertex Buffer Object to the actual opengl buffer to use
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-
-    // actually bind vertices data to the array buffer
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-    
     // create shader program
 
     Shader shaderProgram("src/shaders/basic.vert", "src/shaders/basic.frag");
+    
+    // VBO is responsible for storring the data in buffer on GPU
+    
+    VAO vao;
+
+    vao.Bind();
+
+    VBO vbo(vertices, sizeof(vertices));
+
+    EBO ebo(idx, sizeof(idx));
+
+    vao.LinkVBO(vbo, 0);
+
+    vao.Unbind();
+    vbo.Unbind();
+    ebo.Unbind();
 
     // main loop
     while (!glfwWindowShouldClose(win)) {
@@ -104,38 +121,21 @@ int main() {
         glClearColor(0.0f, 0.2f, 0.4f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-
-        // create the vertex attribute pointer for 3 vertices
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, (void*)0);
-        glEnableVertexAttribArray(0);
-
-
-        unsigned int VAO;
-        glGenVertexArrays(1, &VAO);
-
-
-        glBindVertexArray(VAO);
-
-        glBindBuffer(GL_ARRAY_BUFFER, VBO);
-
-        glBufferData(0, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, (void*)0);
-
-        glEnableVertexAttribArray(0);
-
-
         shaderProgram.Activate();
+        
+        vao.Bind();
 
-        glBindVertexArray(VAO);
-
-        glDrawArrays(GL_TRIANGLES, 0, 3);
-
+        glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0);
 
         glfwPollEvents();
         glfwSwapBuffers(win);
     }
 
+
+    vbo.Delete();
+    vao.Delete();
+    ebo.Delete();
+    shaderProgram.Delete();
     glfwDestroyWindow(win);
     glfwTerminate();
 }

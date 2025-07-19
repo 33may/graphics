@@ -1,21 +1,23 @@
-#ifndef VBO_CLASS
-#define VBO_CLASS
+#ifndef ELEMENT_OBJECT_CLASS
+#define ELEMENT_OBJECT_CLASS
 
 #include <glad/gl.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
 #include <fstream>
 
-class VBO{
+
+class EBO{
     public:
         GLuint ID;
-        VBO(GLfloat* vertices, GLsizeiptr size);
-
+        EBO(GLuint* idx, GLsizeiptr size);
+        
         void Bind();
 
         void Unbind();
 
         void Delete();
 };
+
 
 #endif

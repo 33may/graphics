@@ -1,21 +1,27 @@
-#ifndef VBO_CLASS
-#define VBO_CLASS
+#ifndef VERTEX_ATTRIBUTE_CLASS
+#define VERTEX_ATTRIBUTE_CLASS
 
 #include <glad/gl.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
 #include <fstream>
 
-class VBO{
+#include"VertexBufferClass.h"
+
+
+class VAO{
     public:
         GLuint ID;
-        VBO(GLfloat* vertices, GLsizeiptr size);
+        VAO();
 
+        void LinkVBO(VBO vbo, GLuint layout);
+        
         void Bind();
 
         void Unbind();
 
         void Delete();
 };
+
 
 #endif
