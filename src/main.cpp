@@ -3,18 +3,24 @@
 #include <iostream>
 #include <fstream>
 
+
+// function to modify glfwWindow on resize
 void framebuffer_size_callback(GLFWwindow* win, int width, int heigth){
     glViewport(0, 0, width, heigth);
 
     std::cout << "W: "<< width << "\n H: " << heigth;
 }
 
+
+// process esc input
 void processInput(GLFWwindow* win){
     if (glfwGetKey(win, GLFW_KEY_ESCAPE) == GLFW_PRESS){
         glfwSetWindowShouldClose(win, true);
     }
 }
 
+
+// load content from files in std::string
 std::string loadFileSrc(const char* path){
     std::ifstream in(path, std::ios::binary);
 
@@ -29,21 +35,24 @@ std::string loadFileSrc(const char* path){
 
 
 int main() {
-    // 1. Сначала выбираем бэкенд Wayland
+
+    // configure wayland window manager
     glfwInitHint(GLFW_PLATFORM, GLFW_PLATFORM_WAYLAND);
 
-    // 2. Инициализируем GLFW
+    // initialize glfw window manager
     if (!glfwInit()) {
         std::cerr << "GLFW init failed\n";
         return -1;
     }
 
-    // 3. Просим Core‑контекст 3.3
+
+    // configure glfw version and profile
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    // 4. Создаём окно
+
+    // create the window and save pointer for it 
     GLFWwindow* win = glfwCreateWindow(640, 480, "Hello World", nullptr, nullptr);
     if (!win) {
         std::cerr << "Window creation failed\n";
@@ -51,97 +60,122 @@ int main() {
         return -1;
     }
 
-    // 5. Делаем контекст текущим
+
+    // make context current, activate created window
     glfwMakeContextCurrent(win);
     glfwSwapInterval(1);               // V‑sync
 
+
+    // load opengl code implementation
     if (!gladLoadGL(glfwGetProcAddress)){
         std::cerr << "glad loader Failed \n";
         return -1;
     }
 
+    // set viewport to match the windowsize
     glViewport(0, 0, 640, 480);
 
+
+    // add the created size adjust function to the window callback
     glfwSetFramebufferSizeCallback(win, framebuffer_size_callback);
 
-    // 6. Главный цикл
-    while (!glfwWindowShouldClose(win)) {
 
-        // input
-        processInput(win);
-
-
-        // render commands
-
-        glClearColor(0.0f, 0.2f, 0.4f, 1.0f); // заливаем фон
-
-        glClear(GL_COLOR_BUFFER_BIT);
-
-        // vertices
-
-        float vertices[] = {
+    // create verticies of triangle
+    float vertices[] = {
             -0.5f, -0.5f, 0.0,
             0.5f, -0.5f, 0.0f,
             0.0f,  0.5f, 0.0f
         };
 
 
-        // array buffer
-
-        unsigned int VBO;
-        glGenBuffers(1, &VBO);
-
-        // copy the vertices to VBO buffer
-        glBindBuffer(GL_ARRAY_BUFFER, VBO);
-
-        glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    // initialize Vertex Buffer Object pointer and generate actual buffer 
+    GLuint VBO;
+    glGenBuffers(1, &VBO);
 
 
-        // vertex shader
+    // bind the created Vertex Buffer Object to the actual opengl buffer to use
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
 
-        std::string vertexSrc = loadFileSrc("src/shaders/basic.vert");
-        std::string fragmentSrc = loadFileSrc("src/shaders/basic.frag");
+    // actually bind vertices data to the array buffer
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-        // std::cout << vertexSrc;
 
-        const GLchar* srcVertexPtr = vertexSrc.c_str();
-        const GLchar* srcFragmentPtr = fragmentSrc.c_str();
 
-        unsigned int vertexShader;
-        vertexShader = glCreateShader(GL_VERTEX_SHADER);
 
-        glShaderSource(vertexShader, 1, &srcVertexPtr, nullptr);
+    // create shaders
 
-        glCompileShader(vertexShader);
+
+    // read source files
+    std::string vertexSrc = loadFileSrc("src/shaders/basic.vert");
+    std::string fragmentSrc = loadFileSrc("src/shaders/basic.frag");
+
+    
+    // cast to c strings
+    const GLchar* srcVertexPtr = vertexSrc.c_str();
+    const GLchar* srcFragmentPtr = fragmentSrc.c_str();
+
+    
+    // initialize vertexShader ptr
+    GLuint vertexShader;
+
+    // create vertex shader
+    vertexShader = glCreateShader(GL_VERTEX_SHADER);
+
+    // insert source into shader
+    glShaderSource(vertexShader, 1, &srcVertexPtr, nullptr);
+
+    // compile vertex shader
+    glCompileShader(vertexShader);
         
 
 
-        // fragment shader
+    // initialize fragmentShader ptr
+    GLuint fragmentShader;
 
-        unsigned int fragmentShader;
-        fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+    // create fragment shader
+    fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
 
-        glShaderSource(fragmentShader, 1, &srcFragmentPtr, nullptr);
+    // insert source into shader
+    glShaderSource(fragmentShader, 1, &srcFragmentPtr, nullptr);
 
-        glCompileShader(fragmentShader);
-
-
-
-        // shader program
-
-        unsigned int shaderProgram;
-        shaderProgram = glCreateProgram();
+    // compile vertex shader
+    glCompileShader(fragmentShader);
 
 
-        glAttachShader(shaderProgram, vertexShader);
-        glAttachShader(shaderProgram, fragmentShader);
-        glLinkProgram(shaderProgram);
+
+    // initialize fragmentShader ptr
+    GLuint shaderProgram;
+
+    // create program
+    shaderProgram = glCreateProgram();
+
+    // attach vertex to the program
+    glAttachShader(shaderProgram, vertexShader);
+
+    // attach fragment to the program
+    glAttachShader(shaderProgram, fragmentShader);
+
+    // link components inside program
+    glLinkProgram(shaderProgram);
+
+    // delete components, they are included in program
+    glDeleteShader(vertexShader);
+    glDeleteShader(fragmentShader);
 
 
-        glDeleteShader(vertexShader);
-        glDeleteShader(fragmentShader);
 
-        // set the vertex attribute pointer
+    // main loop
+    while (!glfwWindowShouldClose(win)) {
+
+        processInput(win);
+
+
+
+        glClearColor(0.0f, 0.2f, 0.4f, 1.0f);
+
+        glClear(GL_COLOR_BUFFER_BIT);
+
+
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, (void*)0);
         glEnableVertexAttribArray(0);
 
@@ -161,19 +195,16 @@ int main() {
         glEnableVertexAttribArray(0);
 
 
-        // draw the object 
         glUseProgram(shaderProgram);
         glBindVertexArray(VAO);
 
         glDrawArrays(GL_TRIANGLES, 0, 3);
 
-        // check and call events and swap buffer
 
-        glfwPollEvents();              // события ввода
-        glfwSwapBuffers(win);          // commit кадра → окно станет видимым
+        glfwPollEvents();
+        glfwSwapBuffers(win);
     }
 
-    // 7. Завершаем работу
     glfwDestroyWindow(win);
     glfwTerminate();
 }
