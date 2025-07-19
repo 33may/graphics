@@ -8,8 +8,13 @@ find_package(glfw3 REQUIRED)
 
 add_subdirectory(external/glad)
 
-add_executable(graphics src/main.cpp)
+add_executable(graphics
+               src/main.cpp
+               src/shader.cpp
+               src/vbo.cpp)
 
 target_link_libraries(graphics PRIVATE glad glfw OpenGL::GL)
 target_include_directories(graphics PRIVATE external/glad/include)
+
+target_include_directories(graphics PRIVATE include)
 
