@@ -13,7 +13,8 @@ add_executable(graphics
                src/shader.cpp
                src/vbo.cpp
                src/vao.cpp
-               src/ebo.cpp)
+               src/ebo.cpp
+               src/textureClass.cpp)
 
 target_link_libraries(graphics PRIVATE glad glfw OpenGL::GL)
 target_include_directories(graphics PRIVATE ${PROJECT_SOURCE_DIR}external/glad/include)

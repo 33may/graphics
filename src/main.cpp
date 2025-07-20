@@ -4,13 +4,11 @@
 #include <fstream>
 #include <cmath>
 
-#define STB_IMAGE_IMPLEMENTATION
-#include <stb_image.h>
-
 #include"shaderClass.h"
 #include"VertexBufferClass.h"
 #include"VertexAttributeObject.h"
 #include"ElementBufferObject.h"
+#include"TextureObjectClass.h"
 
 
 // function to modify glfwWindow on resize
@@ -126,35 +124,11 @@ int main() {
 
     // create texture
 
-    int width_img, heigth_img, col_channels_img;
+    Texture texture;
 
-    unsigned char* bytes = stbi_load("src/textures/orangutan.jpeg", &width_img, &heigth_img, &col_channels_img, 0);
+    texture.LoadImage(shaderProgram, "src/textures/orangutan.jpeg");
 
-    // std::cout << col_channels_img << std::endl;
-    
-    GLuint texture;
-    
-    glGenTextures(1, &texture);
-    
-    glActiveTexture(GL_TEXTURE0);
-
-    glBindTexture(GL_TEXTURE_2D, texture);
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width_img, heigth_img, 0, GL_RGB, GL_UNSIGNED_BYTE, bytes);
-    glGenerateMipmap(GL_TEXTURE_2D);
-
-    GLuint tex0_uni = glGetUniformLocation(shaderProgram.ID, "tex0");
-    shaderProgram.Activate();
-    glUniform1i(tex0_uni, 0);
-    
-    stbi_image_free(bytes);
-    glBindTexture(GL_TEXTURE_2D, 0);
+    texture.Unbind();
 
     // main loop
     while (!glfwWindowShouldClose(win)) {
@@ -172,7 +146,7 @@ int main() {
 
         glUniform1f(uniform_scale_ptr, 0.7f);
 
-        glBindTexture(GL_TEXTURE_2D, texture);
+        texture.Bind();
         
         vao.Bind();
 
@@ -186,8 +160,7 @@ int main() {
     vbo.Delete();
     vao.Delete();
     ebo.Delete();
-
-    glDeleteTextures(1, &texture);
+    texture.Delete();
 
     shaderProgram.Delete();
     glfwDestroyWindow(win);
