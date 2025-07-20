@@ -8,7 +8,7 @@
 
 #include"shaderClass.h"
 
-unsigned char* LoadImageFile(char* path, int* width_img_ptr, int* heigth_img_ptr, int* col_channels_img_ptr);
+unsigned char* LoadImageFile(const char* path, int* width_img_ptr, int* heigth_img_ptr, int* col_channels_img_ptr);
 
 class Texture{
     public:
@@ -16,7 +16,7 @@ class Texture{
 
         Texture();
 
-        void LoadImage(Shader shaderProgram, char* path);
+        void LoadImage(Shader& shaderProgram, const char* path);
 
         void Bind();
 

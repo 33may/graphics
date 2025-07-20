@@ -4,7 +4,7 @@
 #include <stb_image.h>
 
 
-unsigned char* LoadImageFile(char* path, int* width_img_ptr, int* heigth_img_ptr, int* col_channels_img_ptr){
+unsigned char* LoadImageFile(const char* path, int* width_img_ptr, int* heigth_img_ptr, int* col_channels_img_ptr){
     stbi_set_flip_vertically_on_load(true);
     unsigned char* bytes = stbi_load(path, width_img_ptr, heigth_img_ptr, col_channels_img_ptr, 0);
 
@@ -27,7 +27,7 @@ Texture::Texture(){
 
 }
 
-void Texture::LoadImage(Shader shaderProgram, char* path){
+void Texture::LoadImage(Shader& shaderProgram, const char* path){
 
     int width_img, heigth_img, col_channels_img;
 
@@ -38,8 +38,8 @@ void Texture::LoadImage(Shader shaderProgram, char* path){
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width_img, heigth_img, 0, GL_RGB, GL_UNSIGNED_BYTE, bytes);
     glGenerateMipmap(GL_TEXTURE_2D);
 
-    GLuint tex0_uni = glGetUniformLocation(shaderProgram.ID, "tex0");
     shaderProgram.Activate();
+    GLuint tex0_uni = glGetUniformLocation(shaderProgram.ID, "tex0");
     glUniform1i(tex0_uni, 0);
     
     stbi_image_free(bytes);
