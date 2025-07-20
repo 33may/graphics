@@ -16,7 +16,8 @@ add_executable(graphics
                src/ebo.cpp)
 
 target_link_libraries(graphics PRIVATE glad glfw OpenGL::GL)
-target_include_directories(graphics PRIVATE external/glad/include)
+target_include_directories(graphics PRIVATE ${PROJECT_SOURCE_DIR}external/glad/include)
+target_include_directories(graphics PRIVATE ${PROJECT_SOURCE_DIR}/external/stb)
 
 target_include_directories(graphics PRIVATE include)
 
