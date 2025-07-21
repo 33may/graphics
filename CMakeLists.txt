@@ -5,6 +5,7 @@ set(CMAKE_CXX_STANDARD 20)
 
 find_package(OpenGL REQUIRED)
 find_package(glfw3 REQUIRED)
+find_package(glm CONFIG REQUIRED)
 
 add_subdirectory(external/glad)
 
@@ -16,7 +17,7 @@ add_executable(graphics
                src/ebo.cpp
                src/textureClass.cpp)
 
-target_link_libraries(graphics PRIVATE glad glfw OpenGL::GL)
+target_link_libraries(graphics PRIVATE glad glfw OpenGL::GL glm::glm)
 target_include_directories(graphics PRIVATE ${PROJECT_SOURCE_DIR}external/glad/include)
 target_include_directories(graphics PRIVATE ${PROJECT_SOURCE_DIR}/external/stb)
 
