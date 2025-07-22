@@ -15,7 +15,8 @@ add_executable(graphics
                src/vbo.cpp
                src/vao.cpp
                src/ebo.cpp
-               src/textureClass.cpp)
+               src/textureClass.cpp
+               src/camera.cpp)
 
 target_link_libraries(graphics PRIVATE glad glfw OpenGL::GL glm::glm)
 target_include_directories(graphics PRIVATE ${PROJECT_SOURCE_DIR}external/glad/include)

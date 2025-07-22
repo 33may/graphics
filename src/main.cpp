@@ -13,6 +13,7 @@
 #include"VertexAttributeObject.h"
 #include"ElementBufferObject.h"
 #include"TextureObjectClass.h"
+#include"CameraClass.h"
 
 
 struct WindowSize {
@@ -217,12 +218,16 @@ int main() {
 
     glEnable(GL_DEPTH_TEST);
 
+
+    Camera cam(size.height, size.width,  glm::vec3(0.0f, 0.0f, 4.0f));
+
     // main loop
     while (!glfwWindowShouldClose(win)) {
 
         // read input press keyboard
         processInput(win);
 
+        cam.Inputs(win);
 
         // fill the canvas with color
         glClearColor(0.0f, 0.2f, 0.4f, 1.0f);
@@ -239,34 +244,33 @@ int main() {
 
         // std::cout << "W: "<< size.width << "\n H: " << size.height;
 
-        glm::mat4 model = glm::mat4(1.0f);
+        // glm::mat4 model = glm::mat4(1.0f);
         
-        glm::mat4 view = glm::mat4(1.0f);
+        // glm::mat4 view = glm::mat4(1.0f);
 
-        glm::mat4 proj = glm::mat4(1.0f);
+        // glm::mat4 proj = glm::mat4(1.0f);
 
-        model = glm::rotate(model, glm::radians(rotation), glm::vec3(0.0f, 1.0f, 0.0f));
+        // model = glm::rotate(model, glm::radians(rotation), glm::vec3(0.0f, 1.0f, 0.0f));
 
-        view = glm::translate(view, glm::vec3(0.0f, -0.1f, -3.0f));
+        // view = glm::translate(view, glm::vec3(0.0f, -0.1f, -3.0f));
 
-        view = glm::rotate(view, glm::radians(30.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+        // view = glm::rotate(view, glm::radians(30.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 
-        proj = glm::perspective(glm::radians(45.0f), float(size.width) / float(size.height), 0.1f, 100.0f);
-
-
-        int model_ptr, view_ptr, proj_ptr;
-
-        model_ptr = glGetUniformLocation(shaderProgram.ID, "model");
-        glUniformMatrix4fv(model_ptr, 1, GL_FALSE, glm::value_ptr(model));
-
-        view_ptr = glGetUniformLocation(shaderProgram.ID, "view");
-        glUniformMatrix4fv(view_ptr, 1, GL_FALSE, glm::value_ptr(view));
-
-        proj_ptr = glGetUniformLocation(shaderProgram.ID, "proj");    
-        glUniformMatrix4fv(proj_ptr, 1, GL_FALSE, glm::value_ptr(proj));
+        // proj = glm::perspective(glm::radians(45.0f), float(size.width) / float(size.height), 0.1f, 100.0f);
 
 
-        glUniform1f(uniform_scale_ptr, 0.5f);
+        // int model_ptr, view_ptr, proj_ptr;
+
+        // model_ptr = glGetUniformLocation(shaderProgram.ID, "model");
+        // glUniformMatrix4fv(model_ptr, 1, GL_FALSE, glm::value_ptr(model));
+
+        // view_ptr = glGetUniformLocation(shaderProgram.ID, "view");
+        // glUniformMatrix4fv(view_ptr, 1, GL_FALSE, glm::value_ptr(view));
+
+        // proj_ptr = glGetUniformLocation(shaderProgram.ID, "proj");    
+        // glUniformMatrix4fv(proj_ptr, 1, GL_FALSE, glm::value_ptr(proj));
+
+        cam.Matrix(45.0f, 0.1f, 100.0f, shaderProgram, "camMatrix");
 
         texture.Bind();
         
